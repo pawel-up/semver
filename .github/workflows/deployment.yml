@@ -22,7 +22,7 @@ jobs:
       - name: Install NodeJS
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
       - name: Get npm cache directory
         id: npm-cache-dir
         shell: bash
@@ -52,7 +52,7 @@ jobs:
       - name: Install NodeJS
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           registry-url: 'https://registry.npmjs.org'
       - uses: actions/cache@v4
         with:

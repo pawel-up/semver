@@ -1,7 +1,8 @@
+/* eslint-disable no-console */
 import { test } from '@japa/runner'
 import { spawn } from 'child_process'
 
-const bin = new URL('../../bin/semver', import.meta.url).pathname
+const bin = new URL('../../bin/semver.js', import.meta.url).pathname
 
 const run = (
   args: string[]
@@ -38,6 +39,9 @@ test.group('semver CLI tests', () => {
     ])
     .run(async ({ assert }, args) => {
       const result = await run(args)
+      if (result.code !== 0) {
+        console.log(result)
+      }
       assert.strictEqual(result.code, 0, `Expected exit code 0 for args: ${args.join(' ')}`)
       assert.strictEqual(result.signal, null, `Expected no signal for args: ${args.join(' ')}`)
       assert.match(result.out, /.+/, `Expected output for args: ${args.join(' ')}`)
@@ -72,6 +76,9 @@ test.group('semver CLI tests', () => {
     ])
     .run(async ({ assert }, args) => {
       const result = await run(args)
+      if (result.code !== 0) {
+        console.log(result)
+      }
       assert.strictEqual(result.code, 0, `Expected exit code 0 for args: ${args.join(' ')}`)
       assert.strictEqual(result.signal, null, `Expected no signal for args: ${args.join(' ')}`)
       assert.match(result.out, /.+/, `Expected output for args: ${args.join(' ')}`)

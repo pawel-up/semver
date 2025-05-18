@@ -9,15 +9,50 @@ import { FLAG_INCLUDE_PRERELEASE, FLAG_LOOSE } from '../internal/constants.js'
 const cache = new LRU<Comparator[]>()
 const SPACE_CHARACTERS = /\s+/g
 
-// hoisted class for cyclic dependency
+/**
+ * Represents a SemVer range.
+ *
+ * A Range object encapsulates a range of versions, defined by a set of
+ * comparators. It provides methods for testing if a version satisfies the
+ * range and for checking if two ranges intersect.
+ */
 export default class Range {
+  /**
+   * Indicates whether loose parsing is enabled.
+   * @default false
+   */
   loose = false
+  /**
+   * Indicates whether to include prerelease versions in comparisons.
+   * @default false
+   */
   includePrerelease = false
+  /**
+   * The raw range string provided during construction.
+   */
   raw!: string
+  /**
+   * A 2D array of comparators representing the range.
+   * Each inner array represents a set of comparators that must all be satisfied.
+   * The outer array represents a union of these sets (any set can be satisfied).
+   */
   set: Comparator[][] = []
+  /**
+   * The formatted range string.
+   */
   formatted: string | undefined
+  /**
+   * The options used to construct the Range object.
+   */
   options!: Options
 
+  /**
+   * Constructs a new Range object.
+   *
+   * @param range The range string, a Range object, or a Comparator object.
+   * @param options Options for parsing and comparison, or a boolean value for loose parsing.
+   * @throws {TypeError} If the range is invalid.
+   */
   constructor(range: Range | Comparator | string, options?: Options | boolean) {
     options = parseOptions(options)
 
@@ -81,6 +116,14 @@ export default class Range {
     this.formatted = undefined
   }
 
+  /**
+   * Returns the formatted range string.
+   *
+   * This method formats the range based on its comparator sets and returns the
+   * resulting string.
+   *
+   * @returns The formatted range string.
+   */
   get range(): string {
     if (this.formatted === undefined) {
       this.formatted = ''
@@ -100,14 +143,37 @@ export default class Range {
     return this.formatted
   }
 
+  /**
+   * Formats the Range object into a range string.
+   *
+   * This method is an alias for the `range` getter.
+   *
+   * @returns The formatted range string.
+   */
   format(): string {
     return this.range
   }
 
+  /**
+   * Returns the formatted range string.
+   *
+   * This method is an alias for the `range` getter.
+   *
+   * @returns The formatted range string.
+   */
   toString(): string {
     return this.range
   }
 
+  /**
+   * Parses a range string into an array of comparators.
+   *
+   * This method is used internally by the constructor to parse the input range
+   * string and generate the comparator sets.
+   *
+   * @param range The range string to parse.
+   * @returns An array of Comparator objects.
+   */
   parseRange(range: string): Comparator[] {
     // memoize range parsing for performance.
     // this is a very hot path, and fully deterministic.
@@ -178,6 +244,16 @@ export default class Range {
     return result
   }
 
+  /**
+   * Checks if this range intersects with another range.
+   *
+   * Two ranges intersect if there is at least one version that satisfies both.
+   *
+   * @param range The range to check for intersection.
+   * @param options Options for comparison, or a boolean value for loose parsing.
+   * @returns True if the ranges intersect, false otherwise.
+   * @throws {TypeError} If `range` is not a Range instance.
+   */
   intersects(range: Range, options?: Options | boolean): boolean {
     if (!(range instanceof Range)) {
       throw new TypeError('a Range is required')
@@ -200,7 +276,12 @@ export default class Range {
     })
   }
 
-  // if ANY of the sets match ALL of its comparators, then pass
+  /**
+   * Checks if a version satisfies the range.
+   *
+   * @param version The version to test (string or SemVer object).
+   * @returns True if the version satisfies the range, false otherwise.
+   */
   test(version: string | SemVer): boolean {
     if (!version) {
       return false

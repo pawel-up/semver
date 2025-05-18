@@ -1,5 +1,5 @@
 // just pre-load all the stuff that index.js lazily exports
-import { default as SemVer } from './classes/semver.js'
+import { default as SemVer, type ReleaseType } from './classes/semver.js'
 import { default as parse } from './functions/parse.js'
 import { default as valid } from './functions/valid.js'
 import { default as clean } from './functions/clean.js'
@@ -40,6 +40,8 @@ import { default as subset } from './ranges/subset.js'
 import { re, src, t as tokens } from './internal/re.js'
 import { SEMVER_SPEC_VERSION, RELEASE_TYPES } from './internal/constants.js'
 import { compareIdentifiers, rcompareIdentifiers } from './internal/identifiers.js'
+
+export type { ReleaseType }
 
 export default {
   parse,

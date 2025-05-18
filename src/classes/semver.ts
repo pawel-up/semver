@@ -1,22 +1,79 @@
 import debug from '../internal/debug.js'
 import { MAX_LENGTH, MAX_SAFE_INTEGER } from '../internal/constants.js'
 import { safeRe as re, t } from '../internal/re.js'
-
 import parseOptions, { type Options } from '../internal/parse-options.js'
 import { compareIdentifiers } from '../internal/identifiers.js'
 
+export type ReleaseType =
+  | 'major'
+  | 'minor'
+  | 'patch'
+  | 'prerelease'
+  | 'premajor'
+  | 'preminor'
+  | 'prepatch'
+  | 'release'
+  | 'pre'
+
+/**
+ * Represents a semantic version (SemVer) object.
+ *
+ * A SemVer object encapsulates a version string conforming to the Semantic
+ * Versioning specification (SemVer). It provides methods for comparing,
+ * incrementing, and manipulating versions.
+ */
 export default class SemVer {
+  /**
+   * Indicates whether loose parsing is enabled.
+   * @default false
+   */
   loose = false
+  /**
+   * Indicates whether to include prerelease versions in comparisons.
+   * @default false
+   */
   includePrerelease = false
+  /**
+   * The formatted version string.
+   */
   version!: string
+  /**
+   * The options used to construct the SemVer object.
+   */
   options!: Options
+  /**
+   * The raw version string provided during construction.
+   */
   raw!: string
+  /**
+   * The major version number.
+   */
   major = 0
+  /**
+   * The minor version number.
+   */
   minor = 0
+  /**
+   * The patch version number.
+   */
   patch = 0
+  /**
+   * An array of prerelease identifiers (strings or numbers).
+   */
   prerelease: (string | number)[] = []
+  /**
+   * An array of build metadata identifiers (strings).
+   */
   build: string[] = []
 
+  /**
+   * Constructs a new SemVer object.
+   *
+   * @param version The version string or an existing SemVer object.
+   * @param options Options for parsing and comparison, or a boolean value for loose parsing.
+   * @throws {TypeError} If the version is invalid or not a string.
+   * @throws {TypeError} If any of the major, minor, or patch versions are invalid.
+   */
   constructor(version: string | SemVer, options?: Options | boolean) {
     options = parseOptions(options)
 
@@ -85,6 +142,14 @@ export default class SemVer {
     this.format()
   }
 
+  /**
+   * Formats the SemVer object into a version string.
+   *
+   * This method updates the `version` property with the formatted string
+   * and returns it.
+   *
+   * @returns The formatted version string.
+   */
   format() {
     this.version = `${this.major}.${this.minor}.${this.patch}`
     if (this.prerelease.length) {
@@ -93,10 +158,24 @@ export default class SemVer {
     return this.version
   }
 
+  /**
+   * Returns the formatted version string.
+   *
+   * This method is an alias for `format()`.
+   *
+   * @returns The formatted version string.
+   */
   toString() {
     return this.version
   }
 
+  /**
+   * Compares this SemVer object to another version.
+   *
+   * @param other The version to compare against (string or SemVer object).
+   * @returns 0 if the versions are equal, a positive number if this version is greater,
+   *          and a negative number if this version is less.
+   */
   compare(other: string | SemVer): number {
     debug('SemVer.compare', this.version, this.options, other)
     if (!(other instanceof SemVer)) {
@@ -113,6 +192,13 @@ export default class SemVer {
     return this.compareMain(other) || this.comparePre(other)
   }
 
+  /**
+   * Compares the main parts (major, minor, patch) of two versions.
+   *
+   * @param other The version to compare against (string or SemVer object).
+   * @returns 0 if the main parts are equal, a positive number if this version is greater,
+   *          and a negative number if this version is less.
+   */
   compareMain(other: string | SemVer): number {
     if (!(other instanceof SemVer)) {
       other = new SemVer(other, this.options)
@@ -125,6 +211,13 @@ export default class SemVer {
     )
   }
 
+  /**
+   * Compares the prerelease identifiers of two versions.
+   *
+   * @param other The version to compare against (string or SemVer object).
+   * @returns 0 if the prerelease identifiers are equal, a positive number if this version is greater,
+   *          and a negative number if this version is less.
+   */
   comparePre(other: string | SemVer): number {
     if (!(other instanceof SemVer)) {
       other = new SemVer(other, this.options)
@@ -160,6 +253,13 @@ export default class SemVer {
     return 0
   }
 
+  /**
+   * Compares the build metadata identifiers of two versions.
+   *
+   * @param other The version to compare against (string or SemVer object).
+   * @returns 0 if the build metadata identifiers are equal, a positive number if this version is greater,
+   *          and a negative number if this version is less.
+   */
   compareBuild(other: string | SemVer): number {
     if (!(other instanceof SemVer)) {
       other = new SemVer(other, this.options)
@@ -186,9 +286,17 @@ export default class SemVer {
     return 0
   }
 
-  // preminor will bump the version up to the next minor release, and immediately
-  // down to pre-release. premajor and prepatch work the same way.
-  inc(release: string, identifier: string, identifierBase?: boolean): SemVer {
+  /**
+   * Increments the version by the specified release type.
+   *
+   * @param release The release type to increment (e.g., "major", "minor", "patch", "prerelease").
+   * @param identifier An optional identifier for prerelease versions.
+   * @param identifierBase A boolean indicating whether the identifier should be treated as a base
+   *                       identifier for prerelease increments.
+   * @returns The incremented SemVer object.
+   * @throws {Error} If the release type is invalid or if an identifier is required but not provided.
+   */
+  inc(release: ReleaseType, identifier: string, identifierBase?: boolean): SemVer {
     if (release.startsWith('pre')) {
       if (!identifier && identifierBase === false) {
         throw new Error('invalid increment argument: identifier is empty')

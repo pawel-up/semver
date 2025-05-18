@@ -1,6 +1,6 @@
 {
   "name": "@pawel-up/semver",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "The semantic version parser for the web.",
   "main": "./build/index.js",
   "module": "./build/index.js",

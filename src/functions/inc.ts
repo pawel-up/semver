@@ -1,9 +1,9 @@
-import SemVer from '../classes/semver.js'
+import SemVer, { ReleaseType } from '../classes/semver.js'
 import type { Options } from '../internal/parse-options.js'
 
 export default (
   version: string | SemVer,
-  release: string,
+  release: ReleaseType,
   options: Options,
   identifier: string,
   identifierBase?: boolean

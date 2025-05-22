@@ -6,3 +6,6 @@ commitlint.config.cjs
 tsconfig.json
 web-test-runner.config.mjs
 benchmarks
+eslint.config.js
+range.bnf
+tsconfig.tsbuildinfo

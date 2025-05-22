@@ -15,9 +15,6 @@
 ## temp folders
 /.tmp/
 
-# build
-/_site/
-/dist/
 build/
 .wireit
 tsconfig.tsbuildinfo

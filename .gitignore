@@ -22,3 +22,4 @@ build/
 .wireit
 tsconfig.tsbuildinfo
 benchmarks/history/
+.eslintcache

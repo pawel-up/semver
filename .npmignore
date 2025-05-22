@@ -1,9 +1,8 @@
 .*
 coverage/
 docs/
-test/
+tests/
 commitlint.config.cjs
 tsconfig.json
-dist/test
-dist/tsconfig.tsbuildinfo
 web-test-runner.config.mjs
+benchmarks

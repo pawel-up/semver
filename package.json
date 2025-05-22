@@ -1,11 +1,24 @@
 {
   "name": "@pawel-up/semver",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "The semantic version parser for the web.",
   "main": "./build/index.js",
   "module": "./build/index.js",
   "types": "./build/index.d.ts",
   "type": "module",
+  "exports": {
+    ".": "./build/index.js",
+    "./classes": "./build/classes/index.js",
+    "./classes/*": "./build/classes/*.js",
+    "./classes/*.js": "./build/classes/*.js",
+    "./functions": "./build/functions/index.js",
+    "./functions/*": "./build/functions/*.js",
+    "./functions/*.js": "./build/functions/*.js",
+    "./ranges": "./build/ranges/index.js",
+    "./ranges/*": "./build/ranges/*.js",
+    "./ranges/*.js": "./build/ranges/*.js",
+    "./package.json": "./package.json"
+  },
   "scripts": {
     "build": "npm run build:ts && npm run lint",
     "build:ts": "wireit",
